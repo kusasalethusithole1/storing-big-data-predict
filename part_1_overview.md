@@ -208,6 +208,7 @@ Your boss suggests that you launch the templates in the order given below. For e
        alt="Overview of CloudFormation dashboard"
        width="700px"/>
     <br>
+  
   ![image](https://github.com/user-attachments/assets/6c3bb08c-db37-418c-9a46-de74e754070a)
   <br>
     <em>Visual representations of the deployed VPC infrastructure. The resulting visuals produced within the visualisation views should mirror these images.</em>
