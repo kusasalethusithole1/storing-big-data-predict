@@ -199,7 +199,7 @@ Not wanting you to spend forever figuring this out, your boss reassures you with
 
 Having put much effort into the writing of your CloudFormation templates, its now time to see them come to life by launching them as stacks using the CloudFormation service. 
 
-Your boss suggests that you launch the templates in the order given below. For each template, they provide a handy list of values to specify for the input parameters during stack configuration, along with a representation of what the stack should look like when viewed through the [*Visual designer*](https://console.aws.amazon.com/cloudformation/designer) tool of CloudFormation: 
+Your boss suggests that you launch the templates in the order given below. For each template, they provide a handy list of values to specify for the input parameters during stack configuration, along with a representation of what the stack should look like when viewed through the [*Visual designer*] (https://console.aws.amazon.com/cloudformation/designer) or through the [*Application Composer*](https://docs.aws.amazon.com/application-composer/latest/dg/what-is-composer.html) tools of CloudFormation: 
 
 **1) VPC Stack Launch**
 
@@ -208,7 +208,9 @@ Your boss suggests that you launch the templates in the order given below. For e
        alt="Overview of CloudFormation dashboard"
        width="700px"/>
     <br>
-    <em>A visual representation of the deployed VPC infrastructure. The resulting visual produced within the Designer view should mirror this image.</em>
+  ![image](https://github.com/user-attachments/assets/6c3bb08c-db37-418c-9a46-de74e754070a)
+  <br>
+    <em>Visual representations of the deployed VPC infrastructure. The resulting visuals produced within the visualisation views should mirror these images.</em>
 </p>
 
  - *Stack name*: Use your challenge name designator as instructed in [Step 1, action 3](#step-1-establishing-prerequisites), e.g. `DEDOREXP-VPC`. 
