@@ -132,7 +132,7 @@ To put this notification solution in place, you determine that you'll need to co
 
 |    🚩 **Student Instructions** 🚩    |
 | ------------------------------------ |
-| As before, complete actions 1-3 in order to finish this step. Importantly, you'll need to ensure that you register the `edsa.predicts@explore-ai.net` email address as an email recipient, along with your personal email address, when configuring the SNS topic as part of action 1. |
+| As before, complete actions 1-3 in order to finish this step. Importantly, you'll need to ensure that you register the `predicts@sandtech.com` email address as an email recipient, along with your personal email address, when configuring the SNS topic as part of action 1. |
 
 ### Step 6: Connect AWS Kinesis Firehose to Streaming Service
 
