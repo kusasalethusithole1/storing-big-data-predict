@@ -397,7 +397,7 @@ Some implementation details here include:
 
 |    🚩 **Student Instructions** 🚩    |
 | ------------------------------------ |
-| Configure your AWS CloudWatch alarm for the file share as directed above. When choosing email notification end-points, **take especial care to add the `edsa.predicts@explore-ai.net` address**. EDSA will take responsibility for confirming this address as a recipient within a 24-hour period.|
+| Configure your AWS CloudWatch alarm for the file share as directed above. When choosing email notification end-points, **take especial care to add the `predicts@sandtech.com` address**. EDSA will take responsibility for confirming this address as a recipient within a 24-hour period.|
 
 ### Step 6: Testing Your System 
 
@@ -437,7 +437,7 @@ If the output of this command is a long list of various `.csv` files, then the t
 
 |      ⏱ **Assessment Time** ⏱       |
 | ------------------------------------ |
-| As part of the assessment for this component of the predict, you will receive a mark based-upon your system's ability to deliver an email-based CloudWatch alarm notification to the `edsa.predict@explore-ai.net` address. Thus, it's important that your notification topic is registered with this address, and that you provide at least 24 hours between the time of topic registration and triggering your alarm for the final time (once the topic is registered with the address, feel free to trigger the alarm multiple times, you only need one valid submission to be awarded marks for this component). If you have any questions or concerns around this point, you can raise these with a course facilitator. | 
+| As part of the assessment for this component of the predict, you will receive a mark based-upon your system's ability to deliver an email-based CloudWatch alarm notification to the `predicts@sandtech.com` address. Thus, it's important that your notification topic is registered with this address, and that you provide at least 24 hours between the time of topic registration and triggering your alarm for the final time (once the topic is registered with the address, feel free to trigger the alarm multiple times, you only need one valid submission to be awarded marks for this component). If you have any questions or concerns around this point, you can raise these with a course facilitator. | 
 
 |      ⏱ **Assessment Time** ⏱       |
 | ------------------------------------ |
