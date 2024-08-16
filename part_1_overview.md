@@ -27,10 +27,10 @@ Before you do anything, your boss advises you that there are some prerequisite c
 
 2. **Select the correct AWS region**: Your boss expects all work to be completed within the `eu-west-1` AWS region. Ensure that this region is used where applicable throughout the following steps of the task. 
 
-3. **Conform to an appropriate naming convention**: Wanting to monitor your work as you progress through this part of the challenge, your boss asks you to use the following convention to name each service you configure: **"DE{first 3 letters of your name capitalised}{first 3 letters of your surname capitalised}-{name of service}"**. For example, when configuring a VPC, and having the name *"Dora Explorer"*, the applied service name would be *"DEDOREXP-VPC"*.   
+3. **Conform to an appropriate naming convention**: Wanting to monitor your work as you progress through this part of the challenge, your boss asks you to use the following convention to name each service you configure: **"{Cohort}{first 3 letters of your name capitalised}{first 3 letters of your surname capitalised}-{name of service}"**. For example, when configuring a VPC, from the January 2023 Full Time cohort with the name *"Dora Explorer"*, the applied service name would be *"2301FTDEDOREXP-VPC"*.
 
 4. **Generate a new key pair to access resources created within this part of the challenge**: To securely log into the resources you create during the task (ensuring that no one from your team tampers with your efforts), create a new key pair under the AWS EC2 service. 
-    - Set the name of key pair using the challenge naming convention, e.g. *"DEDOREXP-keypair"*. 
+    - Set the name of key pair using the challenge naming convention, e.g. *"2301FTDEDOREXP-keypair"*. 
     - Following this process should produced a `.pem` file for download. Store this file in a secure location for use later on in the task.     
 
 
@@ -103,7 +103,7 @@ Not wanting you to spend forever figuring this out, your boss reassures you with
 
  - *Template Inputs*: The following items represent fields which should be entered by a user when spinning up the CloudFormation VPC template as a stack. 
    - `EnvironmentName`: A string that will be prefixed onto each resource created in the template. This will be used to help identify the resources you create during the challenge. 
-     - The default value for this input value should be `DE-Extract`. 
+     - The default value for this input value should use the naming convention of {cohort}{First three letter of first name}-{First three leters of surname} `2301FTDEDOREXP-Extract`. 
    - `VpcCIDR`: The IPv4 address space, given in [CIDR](https://www.digitalocean.com/community/tutorials/understanding-ip-addresses-subnets-and-cidr-notation-for-networking) notation, for the VPC hosting the scenario challenge.
      - The default value for this input value should be `192.168.0.0/16`
    - `DataCenterPublicSubnetCIDR`: The IPv4 address space, again given in CIDR notation, for the publicly accessible portion of the VPC.
@@ -124,10 +124,10 @@ Not wanting you to spend forever figuring this out, your boss reassures you with
      - The first `AvailabilityZone` should be chosen for the subnet placement. *Note:* This assignment should be dynamic based upon which AWS region is chosen for the stack deployment.  
      - The subnet's `CidrBlock` configuration should be inherited from the `DataCenterPublicSubnetCIDR` template input.
      - The subnet should automatically provide any new instances deployed within it a public IPv4 address. 
-     - The subnet should be given a {key: value} tag of {"Name": "DE-Extract Data Center Subnet"}.
+     - The subnet should be given a {key: value} tag using the naming convention of {cohort}{First three letter of first name}-{First three leters of surname} {"Name": "2301FTDEDOREXP-Extract Data Center Subnet"}.
    - `PublicRouteTable`: A route table for the configured VPC. 
      - The route table should have its `VpcId` associated with the configured `VPC` above. 
-     - The route table should be given a {key: value} tag of {"Name": "DE-Extract Public Routes"}.
+     - The route table should be given a {key: value} tag using the naming convention of {cohort}{First three letter of first name}-{First three leters of surname} {"Name": "2301FTDEDOREXP-Extract Public Routes"}.
    - `DefaultPublicRoute`: Specifies a route in the above route table. 
      - *NB*: This resource should only be created *after* the `InternetGatewayAttachment` above!
      - The route should inherit its `RouteTableId` from the above `PublicRouteTable`. 
@@ -138,22 +138,22 @@ Not wanting you to spend forever figuring this out, your boss reassures you with
      - Its `SubnetId` should be that of the public subnet of the VPC (`DataCenterPublicSubnet`).
    - `WindowsInstanceSG`: The first of three security groups. This group permits [RDP](https://www.cisecurity.org/white-papers/security-primer-remote-desktop-protocol/) access to an instance deployed within the public subnet of the VPC. 
      - The security group should have a `VpcId` associating it with the `VPC` created in this template. 
-     - It should be given a `GroupName` corresponding to `DE-Extract-WindowsInstanceSG`.
+     - It should be given a `GroupName` corresponding using the naming convention of {cohort}{First three letter of first name}-{First three leters of surname}  `2301FTDEDOREXP-Extract-WindowsInstanceSG`.
      - It should have an appropriately descriptive `GroupDescription`.
      - Regarding the group's `SecurityGroupIngress`, it should permit all *tcp* traffic *to and from the default RDP port (3389)*, regardless of the source IPv4 address (corresponds to a `CidrIp` of `0.0.0.0/0`).
-     - The security group should be given a {key: value} tag of {"Name": "DE-Extract-WindowsInstanceSG"}.
+     - The security group should be given a {key: value} tag using the naming convention of {cohort}{First three letter of first name}-{First three leters of surname} {"Name": "2301FTDEDOREXP-Extract-WindowsInstanceSG"}.
    - `FileServerSG`: The second security group, which is responsible for permitting `ssh` access to the data center's file server from an internal source within the VPC.
      - Like the previous one, the file server security group should use its `VpcId` to associate with the `VPC` created in the template. 
-     - Its `GroupName` should be `DE-Extract-FileServerSG`. 
+     - Its `GroupName` should use the naming convention of {cohort}{First three letter of first name}-{First three leters of surname}  `2301FTDEDOREXP-Extract-FileServerSG`. 
      - As before, the security group should have an appropriately descriptive `GroupDescription`.
      - For this group's `SecurityGroupIngress`, it should permit all *tcp* traffic *to and from the default ssh port (22)*. Unlike the previous security group, however, it should *block* any traffic from addresses outside of the public subnet of the VPC (corresponds to a `CidrIp` of `192.168.10.0/24`). 
-     - The security group should be given a {key: value} tag of {"Name": "DE-Extract-FileServerSG"}.
+     - The security group should be given a {key: value} tag using the naming convention of {cohort}{First three letter of first name}-{First three leters of surname} {"Name": "2301FTDEDOREXP-Extract-FileServerSG"}.
    - `FileGatewaySG`: The last of the security groups, and the last resource of the template. This security group controls the access to the file gateway instance configured later on in this challenge.
      - As all the other security groups, the file gateway security group should use its `VpcId` to associate with the `VPC` created in the template.
-     - It should have a `GroupName` of `DE-Extract-FileGatewaySG`. 
+     - It should have a `GroupName` using the naming convention of {cohort}{First three letter of first name}-{First three leters of surname}  `2301FTDEDOREXP-Extract-FileGatewaySG`. 
      - It should also have an appropriately descriptive `GroupDescription`.
      - `SecurityGroupIngress` for the file gateway should permit tcp access *to and from all ports* on a given instance (ports 1 - 65534). However, only IPv4 addresses within the `VPC` should be able to communicate through the security group (corresponds to a `CidrIp` of `192.168.0.0/16`)   
-     - Finally, the security group should be given a {key: value} tag of {"Name": "DE-Extract-FileGatewaySG"} 
+     - Finally, the security group should be given a {key: value} tag using the naming convention of {cohort}{First three letter of first name}-{First three leters of surname}  {"Name": "2301FTDEDOREXP-Extract-FileGatewaySG"} 
  
 **Windows-instance Template**
 
@@ -188,12 +188,12 @@ Not wanting you to spend forever figuring this out, your boss reassures you with
       - The security groups to which the instance is assigned should be defined by the `SecurityGroupIds` template input. 
       - The `SubnetId` to which the instance is associated should be given by the `Subnet` input of the template. 
       - The IAM instance profile attached to the instance should be the `WindowsInstanceProfile` resource created above. 
-      - Finally, the instance should be given a {key: value} tag of {"Name": "DE-Extract-Windows-Instance"}
+      - Finally, the instance should be given a {key: value} tag using the naming convention of {cohort}{First three letter of first name}-{First three leters of surname}  {"Name": "2301FTDEDOREXP-Extract-Windows-Instance"}
 
 
 |    🚩 **Student Instructions** 🚩    |
 | ------------------------------------ |
-| Given the detailed descriptions above, write two YAML-based CloudFormation templates that configure the needed resources corresponding to the *VPC Template* and *Windows-instance Template*. Ensure that the *names used to describe resources and input parameters are matched exactly* within the created templates. Note that *resource Ids must not be hard-coded* into the templates, but should be referenced dynamically upon stack creation. Name the completed VPC template file with the convention `{firstname}-{surname}-VPC.yml`, e.g. `dora-explorer-VPC.yml`. Follow the same convention for the Windows-instance template: `{firstname}-{surname}-Windows-instance.yml`. |
+| Given the detailed descriptions above, write two YAML-based CloudFormation templates that configure the needed resources corresponding to the *VPC Template* and *Windows-instance Template*. Ensure that the *names used to describe resources and input parameters are matched exactly* within the created templates. Note that *resource Ids must not be hard-coded* into the templates, but should be referenced dynamically upon stack creation. Name the completed VPC template file with the naming convention of `{cohort}{First three letter of first name}{First three leters of surname}-VPC.yml`, e.g. `2301FTDEDOREXP-VPC.yml`. Follow the same convention for the Windows-instance template: `2301FTDEDOREXP-Windows-instance.yml`. |
 
 #### 2.4) Launching Infrastructure via CloudFormation
 
@@ -215,7 +215,7 @@ Your boss suggests that you launch the templates in the order given below. For e
 </p>
 
  - *Stack name*: Use your challenge name designator as instructed in [Step 1, action 3](#step-1-establishing-prerequisites), e.g. `DEDOREXP-VPC`. 
- - *EnvironmentName*: Leave this as the default value of `DE-Extract`.
+ - *EnvironmentName*: Leave this as the default value of `2301FTDEDOREXP-Extract`.
  - *VpcCIDR*: Leave this as the default value of `192.168.0.0/16`.
  - *DataCenterPublicSubnetCIDR*: Leave this as the default value of `192.168.10.0/24`.
 
@@ -234,9 +234,9 @@ They hint that no additional configurations should be required for this VPC temp
 
  - *Stack name*: Again, use your task name designator as instructed in [Step 1, action 3](#step-1-establishing-prerequisites), e.g. `DEDOREXP-Windows-Instance`. 
  - *KeyName*: Choose the name of the EC2 key pair created in [Step 1, action 4](#step-1-establishing-prerequisites), e.g. *DEDOREXP-keypair*. 
- - *VPC*: Choose the VPC configured in the previous template (should be tagged with 'DE-Extract' if launched correctly). 
- - *Subnet*: Choose the subnet configured in the previous template (should be tagged with 'DE-Extract Data Center Subnet' if launched correctly).
- - *SecurityGroupIds*: Choose the security group tagged with 'DE-Extract-WindowsInstanceSG', as configured in the previous template. 
+ - *VPC*: Choose the VPC configured in the previous template (should be tagged with '2301FTDEDOREXP-Extract' if launched correctly). 
+ - *Subnet*: Choose the subnet configured in the previous template (should be tagged with '2301FTDEDOREXP-Extract Data Center Subnet' if launched correctly).
+ - *SecurityGroupIds*: Choose the security group tagged with '2301FTDEDOREXP-Extract-WindowsInstanceSG', as configured in the previous template. 
  - *LatestWindowsAmiid*: Leave this as the default value of `/aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base`.
 
 Your boss mentions that this stack will ask for IAM role permission acknowledgement, but shouldn't require any additional configurations otherwise. 
@@ -254,8 +254,8 @@ Your boss mentions that this stack will ask for IAM role permission acknowledgem
  - *Stack name*: As done before, use your task name designator as instructed in [Step 1, action 3](#step-1-establishing-prerequisites), e.g. `DEDOREXP-Linux-Instance`.
  - *KeyName*: Choose the name of the EC2 key pair created in [Step 1, action 4](#step-1-establishing-prerequisites), e.g. *DEDOREXP-keypair*. 
  - *VPC*: Choose the VPC configured in the initial template (should be tagged with 'DE-Extract' if launched correctly). 
- - *Subnet*: Choose the subnet configured in the initial template (should be tagged with 'DE-Extract Data Center Subnet' if launched correctly).
- - *SecurityGroupIds*: Choose the security group tagged with 'DE-Extract-FileServerSG', as configured in the first template. 
+ - *Subnet*: Choose the subnet configured in the initial template (should be tagged with '2301FTDEDOREXP-Extract Data Center Subnet' if launched correctly).
+ - *SecurityGroupIds*: Choose the security group tagged with '2301FTDEDOREXP-Extract-FileServerSG', as configured in the first template. 
  - *LatestLinuxAmiid*: Leave this as the default value of `/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2`.
 
 Again, this stack will ask for IAM role permission acknowledgement, but won't require any additional configurations. 
@@ -311,12 +311,12 @@ Your boss advises you on some details to look out for during this configuration 
    - Ensure that the instance size is selected as **c5.xlarge** (smaller instances may lead to an unresponsive gateway).
    - Deploy the instance into the VPC and subnet configured within [Step 2](#step-2-provisioning-infrastructure).
    - In order to provide cache storage for the gateway, add an additional 30 GiB EBS volume to the instance. This volume should be a general purpose SSD (gp2), and should terminate on deletion. 
-   - Give your instance and easily identifiable name tag using the challenge naming convention, e.g. "DEDOREXP-filegateway".
+   - Give your instance and easily identifiable name tag using the challenge naming convention, e.g. "2301FTDEDOREXP-filegateway".
    - When choosing the instance's security groups, select the existing "DE-Extract-FileGatewaySG" configured as part of the VPC stack in [Step 2](#step-2-provisioning-infrastructure). 
    - Once launched, you should record the private IPv4 address of the gateway host instance. This address will be used shortly to complete the setup of the file gateway. 
  - *File Gateway Activation*: Note that once the host platform of the file gateway has been configured, the remaining steps of the file gateway setup **must** be completed from the Windows instance. Failing to do this will result in the activation of the gateway indefinitely timing out.
    - Ensure that you configure the file gateway with a "Public" service endpoint. 
-   - Follow the challenge naming convention to give the file gateway an appropriate name, e.g. "DEDOREXP-filegateway".
+   - Follow the challenge naming convention to give the file gateway an appropriate name, e.g. "2301FTDEDOREXP-filegateway".
    - After the gateway is activated, you'll need to configure its local disks and caching behavior. Here, when choosing a partition for cache, select the additional 30 GiB EBS volume you created when configuring the gateway instance. 
    - All other properties of the gateway should be left in their default state.
 
