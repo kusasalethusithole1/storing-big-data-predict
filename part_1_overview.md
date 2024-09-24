@@ -255,7 +255,7 @@ Your boss mentions that this stack will ask for IAM role permission acknowledgem
  - *KeyName*: Choose the name of the EC2 key pair created in [Step 1, action 4](#step-1-establishing-prerequisites), e.g. *FTDE2301DOREXP-keypair*. 
  - *VPC*: Choose the VPC configured in the initial template (should be tagged with 'FTDE2301DOREXP-Extract' if launched correctly). 
  - *Subnet*: Choose the subnet configured in the initial template (should be tagged with 'FTDE2301DOREXP-Extract Data Center Subnet' if launched correctly).
- - *SecurityGroupIds*: Choose the security group tagged with 'FTDE2301DOREXP-Extract-FileServerSG', as configured in the first template. 
+ - *SecurityGroupIds*: Choose the security group tagged with 'FTDE2301DOREXP-FileServerSG', as configured in the first template. 
  - *LatestLinuxAmiid*: Leave this as the default value of `/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2`.
 
 Again, this stack will ask for IAM role permission acknowledgement, but won't require any additional configurations. 
