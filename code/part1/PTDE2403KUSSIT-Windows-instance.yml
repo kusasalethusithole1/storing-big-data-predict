@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:   #The following items represent fields which should be entered by a user when spinning up the CloudFormation Windows instance template as a stack.
+  KeyName:
+    Description: A dropdown list enabling the selection of the key pair used to decrypt the Windows instance password generated on its instantiation.
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    ConstraintDescription: Must be the name of an existing EC2 KeyPair.
+  VPC:
+    Description: VPC to deploy resources into.
+    Type: 'AWS::EC2::VPC::Id'
+    ConstraintDescription: Must be the id of an existing VPC.
+  Subnet:
+    Description: Public subnet.
+    Type: 'AWS::EC2::Subnet::Id'
+    ConstraintDescription: Must be the id of an existing Subnet.
+  SecurityGroupIds:
+    Description: The security group/s for resources.
+    Type: 'List<AWS::EC2::SecurityGroup::Id>'
+  LatestWindowsAmiId:
+    Description: A resource path representing the latest Windows Amazon Machine Image (AMI) that should be used to create the remove instance.
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-windows-latest/Windows_Server-2019-English-Full-Base
+Resources:   #The following items represent resources and their respective properties that should be configured and deployed within the Windows instance template.
+  WindowsInstanceRole:   #This is an IAM role that will be assigned to the Windows-based EC2 instance, allowing it to interact with other AWS services
+    Type: 'AWS::IAM::Role'
+    DeletionPolicy: Delete
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+  WindowsInstanceProfile:   #This is an IAM instance profile that allows our WindowsInstanceRole created above to be associated with an EC2 instance
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref WindowsInstanceRole
+  WindowsInstanceRolePolicy:  #The IAM policy to be associated with the above-defined IAM role. This policy enables read-only access to all S3 buckets within my account.
+    Type: 'AWS::IAM::Policy'
+    DeletionPolicy: Delete
+    Properties:
+      PolicyName: !Sub "Windows-client-${AWS::StackName}"
+      Roles:
+        - !Ref WindowsInstanceRole
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:Get*'
+              - 's3:List*'
+            Resource: '*'
+  WindowsInstance:   #The Windows EC2 instance which represents an on-premise corporate machine which has network access to the private file server (Linux instance).
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Ref LatestWindowsAmiId
+      KeyName: !Ref KeyName
+      InstanceType: t2.micro
+      SecurityGroupIds: !Ref SecurityGroupIds
+      SubnetId: !Ref Subnet
+      IamInstanceProfile: !Ref WindowsInstanceProfile
+      Tags:
+        - Key: Name
+          Value: PTDE2403KUSSIT-Extract-Windows-Instance
