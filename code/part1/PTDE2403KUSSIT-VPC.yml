@@ -1,0 +1,106 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:   #The following items represent fields which should be entered by a user when spinning up the CloudFormation VPC template as a stack.
+  EnvironmentName:
+    Description: A string that will be prefixed onto each resource created in the template. This will be used to help identify the resources you create during the challenge.
+    Type: String
+    Default: PTDE2403KUSSIT-Extract
+  VpcCIDR:
+    Description: The IPv4 address space, given in CIDR notation, for the VPC hosting the scenario challenge.
+    Type: String
+    Default: 192.168.0.0/16
+  DataCenterPublicSubnetCIDR:
+    Description: The IPv4 address space, again given in CIDR notation, for the publicly accessible portion of the VPC.
+    Type: String
+    Default: 192.168.10.0/24
+Resources:   #The following items represent resources and their respective properties that should be configured and deployed within the VPC template.
+  VPC:   #An AWS virtual private cloud (VPC)
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: !Ref VpcCIDR
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Ref EnvironmentName
+  InternetGateway:   #An internet gateway, used to provide connectivity between the VPC and the internet
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Ref EnvironmentName
+  InternetGatewayAttachment:   #An attachment that connects the above VPC and Internet Gateway
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+  DataCenterPublicSubnet:   #Declares the public subnet of the VPC (portion of the VPC which can be accessed from the internet). This represents the portion of the data center network which you can log into as part of the challenge scenario
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Ref DataCenterPublicSubnetCIDR
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName} Data Center Subnet"
+  PublicRouteTable:   #A route table for the configured VPC
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName} Public Routes"
+  DefaultPublicRoute:   #Specifies a route in the above route table
+    Type: 'AWS::EC2::Route'
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref InternetGateway
+  DataCenterPublicSubnetRouteTableAssociation:   #The first of three security groups. This group permits RDP access to an instance deployed within the public subnet of the VPC
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref DataCenterPublicSubnet
+  WindowsInstanceSG:   #The first of three security groups. This group permits RDP access to an instance deployed within the public subnet of the VPC
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref VPC
+      GroupName: !Sub "${EnvironmentName}-WindowsInstanceSG"
+      GroupDescription: This group permits RDP access to an instance deployed within the public subnet of the VPC.
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3389
+          ToPort: 3389
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-WindowsInstanceSG"
+  FileServerSG:   #The second security group, which is responsible for permitting ssh access to the data center's file server from an internal source within the VPC
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref VPC
+      GroupName: !Sub "${EnvironmentName}-FileServerSG"
+      GroupDescription: This group is responsible for permitting ssh access to the data center's file server from an internal source within the VPC.
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref DataCenterPublicSubnetCIDR
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-FileServerSG"
+  FileGatewaySG:   #The last of the security groups, and the last resource of the template. This security group controls the access to the file gateway instance configured later on in this challenge
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref VPC
+      GroupName: !Sub "${EnvironmentName}-FileGatewaySG"
+      GroupDescription: This security group controls the access to the file gateway instance configured later on in this challenge.
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 1 - 65534
+          ToPort: 1 - 65534
+          CidrIp: !Ref VpcCIDR
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-FileGatewaySG"
