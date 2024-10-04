@@ -81,7 +81,7 @@ Resources:   #The following items represent resources and their respective prope
     Properties:
       VpcId: !Ref VPC
       GroupName: !Sub "${EnvironmentName}-FileServerSG"
-      GroupDescription: This group is responsible for permitting ssh access to the data center's file server from an internal source within the VPC.
+      GroupDescription: This group is responsible for permitting ssh access to the data centers file server from an internal source within the VPC.
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -98,8 +98,8 @@ Resources:   #The following items represent resources and their respective prope
       GroupDescription: This security group controls the access to the file gateway instance configured later on in this challenge.
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: 1 - 65534
-          ToPort: 1 - 65534
+          FromPort: 1
+          ToPort: 65534
           CidrIp: !Ref VpcCIDR
       Tags:
         - Key: Name
