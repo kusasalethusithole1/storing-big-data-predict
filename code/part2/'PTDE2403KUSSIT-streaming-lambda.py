@@ -176,11 +176,17 @@ def lambda_handler(event, context):
         # the firehose stream
         # ===================================================================================
 
-        pass
+        #raise Exception("Forced exception - to emulate the scenario where the streaming service experinces a failure")
+        
+        stream_name = 'ptde2403dekussit-deliverystream'
+        firehose_client.put_record_batch(
+            DeliveryStreamName=stream_name,
+            Records=batch
+            )
 
     except ClientError as e:
         logging.error(e)
         exit(1)
 
     logging.info('Test data sent to Firehose stream')
-
+    
